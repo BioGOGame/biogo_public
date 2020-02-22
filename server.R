@@ -89,10 +89,10 @@ shinyServer(function(input, output, clientData, session) {
   modalLogin <- function(){
     showModal(modalDialog(
       textInput("username", lang$username,
-                placeholder = 'Sacha'
+                placeholder = 'sacha'
       ),
       passwordInput("password", lang$password,
-                    placeholder = 'Pikachu'
+                    placeholder = 'pikachu'
       ),
       footer = tagList(
         actionButton("ok", "OK")

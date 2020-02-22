@@ -20,9 +20,6 @@
 
 rm(list = ls(all.names = TRUE))
 
-# install_version("DBI", version = "0.5", repos = "http://cran.us.r-project.org")
-# install_version("RMySQL", version = "0.10.9", repos = "http://cran.us.r-project.org")
-
 # LOAD ALL REQUIRED LIBRARIES
 library(shiny)
 library(shinyWidgets)
@@ -47,7 +44,6 @@ source('src/lightbox.R')
 source('src/photoswipe.R')
 library(dplyr)
 library(plyr)
-library(aws.s3)
 library(RSQLite)
 library(pander)
 
@@ -80,8 +76,16 @@ planning          <- dbGetQuery(con, "SELECT * FROM planning")
 
 all_types          <- unique(all_quests$type)
 
+# GAME PARAMETERS. CAN BE CHANGE IN THE INTERFACE
+lang_id <- all_params$value[all_params$param == "lang"]
+max_found_quest <- as.numeric(all_params$value[all_params$param == "max_found_quest"]) # min number of zones to visit
+req_bounties <- as.numeric(all_params$value[all_params$param == "req_bounties"]) # min number of zones to visit
+req_bounties_corr <- as.numeric(all_params$value[all_params$param == "req_bounties_corr"]) 
+req_out_zones <- as.numeric(all_params$value[all_params$param == "req_out_zones"]) 
+
+
 # Download the language tables
-lang  <- dbGetQuery(con, "SELECT * FROM language WHERE lang ='fr'") %>% 
+lang  <- dbGetQuery(con, paste0("SELECT * FROM language WHERE lang ='",lang_id,"'")) %>% 
   filter(!is.na(id)) %>% 
   spread(id, item)
 
@@ -109,11 +113,7 @@ tables_str        <- list(all_bounties = paste0(colnames(all_bounties),collapse 
 
 
 
-# GAME PARAMETERS. CAN BE CHANGE IN THE INTERFACE
-req_bounties <- all_params$value[all_params$param == "req_bounties"] # min number of bounties
-req_bounties_corr <- all_params$value[all_params$param == "req_bounties_corr"] # min number of bounties
-req_out_zones <- all_params$value[all_params$param == "req_out_zones"] # min number of zones to visit
-max_found_quest <- all_params$value[all_params$param == "max_found_quest"] # min number of zones to visit
+
 
 
 # OTHERS
